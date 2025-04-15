@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router(); //manejador de rutas de express
 const vehiculoSchema = require("../models/vehiculoModels");
 const administradorSchema = require("../models/administradorModels");
+const verifyToken = require("./validate_token");
 
-
-router.post("/vehiculo", async (req, res) => {
+router.post("/vehiculo", verifyToken, async (req, res) => {
     try {
         const { tipoVehiculo, placa, fechaHoraIngreso, administradorId } = req.body;
 

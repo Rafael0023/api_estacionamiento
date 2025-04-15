@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const administradorSchema = mongoose.Schema({
     nombre: {
         type: String,
-      
+        required: true
     },
     correo: {
         type: String,

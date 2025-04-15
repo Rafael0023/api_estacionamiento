@@ -1,7 +1,9 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const router = express.Router(); //manejador de rutas de express
-const vehiculoSchema = require("../models/vehiculoModels");
 const administradorSchema = require("../models/administradorModels");
+
 
 
 
@@ -10,14 +12,45 @@ const administradorSchema = require("../models/administradorModels");
 router.post('/signup', async (req, res) => {
     const { nombre, correo, contrasena } = req.body;
     const administrador = new administradorSchema({
-        administrador : nombre,
-        correo: correo,
-        contrasena: contrasena
+        nombre,
+        correo,
+        contrasena
     });
     administrador.contrasena = await administrador.encryptContrasena(administrador.contrasena);
     await administrador.save(); //save es un método de mongoose para guardar datos en MongoDB 
-    res.json(administrador);
+    //res.json(administrador);
+
+    const token = jwt.sign({ id: administrador._id }, process.env.SECRET, {
+        expiresIn: 60 * 60 * 24, //un día en segundos
+    });
+    res.json({
+        auth: true,
+        token,
+    });
+
 });
+
+
+//inicio de sesión
+router.post("/login", async (req, res) => {
+    // validaciones
+    const { error } = administradorSchema.validate(req.body.correo, req.body.contrasena);
+    if (error) return res.status(400).json({ error: error.details[0].message });
+    //Buscando el usuario por su dirección de correo
+    const administrador = await administradorSchema.findOne({ correo: req.body.correo });
+    //validando si no se encuentra
+    if (!administrador) return res.status(400).json({ error: "Usuario no encontrado" });
+    //Transformando la contraseña a su valor original para 
+    //compararla con la clave que se ingresa en el inicio de sesión
+    const contrasenaValida = await bcrypt.compare(req.body.contrasena, administrador.contrasena);
+    if (!contrasenaValida)
+        return res.status(400).json({ error: "Clave no válida" });
+    res.json({
+        error: null,
+        data: "Bienvenido(a)",
+    });
+});
+
 
 
 

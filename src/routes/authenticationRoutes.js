@@ -21,7 +21,7 @@ router.post('/signup', async (req, res) => {
     //res.json(administrador);
 
     const token = jwt.sign({ id: administrador._id }, process.env.SECRET, {
-        expiresIn: 60 * 60 * 24, //un día en segundos
+        expiresIn: 60 * 60 * 24, //un día en segundos tiempo valido para el  token
     });
     res.json({
         auth: true,
@@ -33,6 +33,7 @@ router.post('/signup', async (req, res) => {
 
 //inicio de sesión
 router.post("/login", async (req, res) => {
+
     // validaciones
     const { error } = administradorSchema.validate(req.body.correo, req.body.contrasena);
     if (error) return res.status(400).json({ error: error.details[0].message });
@@ -53,14 +54,14 @@ router.post("/login", async (req, res) => {
 
 
 
-
+//odtener lista de administradores
 
 router.get("/administrador", (req, res) => {
     administradorSchema.find()
         .then((data) => res.json(data))
         .catch((error) => res.json({ message: error }));
 });
-
+//buscar administraor por su id
 router.get("/administrador/:id", async (req, res) => {
     try {
         const administrador = await administradorSchema.findById(req.params.id).populate("vehiculos");

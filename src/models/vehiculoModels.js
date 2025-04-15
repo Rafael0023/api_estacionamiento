@@ -37,5 +37,5 @@ const vehiculoSchema = mongoose.Schema({
     administrador: { type: mongoose.Schema.Types.ObjectId, ref: "administrador" }
 });
 
-// Exportamos el modelo
+// Exportamos el modelo 
 module.exports = mongoose.model("vehiculo", vehiculoSchema);

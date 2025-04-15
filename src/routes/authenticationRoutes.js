@@ -20,13 +20,10 @@ router.post('/signup', async (req, res) => {
     await administrador.save(); //save es un método de mongoose para guardar datos en MongoDB 
     //res.json(administrador);
 
-    const token = jwt.sign({ id: administrador._id }, process.env.SECRET, {
-        expiresIn: 60 * 60 * 24, //un día en segundos tiempo valido para el  token
-    });
     res.json({
-        auth: true,
-        token,
+        administrador
     });
+  
 
 });
 
@@ -46,10 +43,18 @@ router.post("/login", async (req, res) => {
     const contrasenaValida = await bcrypt.compare(req.body.contrasena, administrador.contrasena);
     if (!contrasenaValida)
         return res.status(400).json({ error: "Clave no válida" });
-    res.json({
-        error: null,
-        data: "Bienvenido(a)",
+    const token = jwt.sign({ id: administrador._id }, process.env.SECRET, {
+        expiresIn: 60 * 60 * 24, //un día en segundos tiempo valido para el  token
     });
+    res.json({
+        
+        
+        data: "Bienvenido(a)",
+        auth: true,
+        token,
+
+    });
+
 });
 
 
@@ -98,7 +103,7 @@ router.put("/administrador/:id", (req, res) => {
 });
 
 //eliminar administrador por id:
-router.delete("/administrador:id", (req, res) => {
+router.delete("/administrador/:id", (req, res) => {
     const { id } = req.params;
     administradorSchema
         .findByIdAndDelete(id)

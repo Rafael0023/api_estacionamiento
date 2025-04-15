@@ -4,22 +4,23 @@ const vehiculoSchema = require("../models/vehiculoModels");
 const administradorSchema = require("../models/administradorModels");
 const verifyToken = require("./validate_token");
 
-router.post("/vehiculo", verifyToken, async (req, res) => {
+router.post("/vehiculos", verifyToken, async (req, res) => {
     try {
-        const { tipoVehiculo, placa, fechaHoraIngreso, administradorId } = req.body;
+        const { tipoVehiculo, placa, fechaHoraIngreso, ubicacion, administrador } = req.body;
 
         // Crear nuevo vehículo con referencia al administrador
         const vehiculo = new vehiculoSchema({
             tipoVehiculo,
             placa,
             fechaHoraIngreso,
-            administrador: administradorId
+            ubicacion,
+            administrador: administrador
         });
 
         const nuevoVehiculo = await vehiculo.save();
 
         // Agregar ID del vehículo al array de vehículos del administrador
-        await administradorSchema.findByIdAndUpdate(administradorId, {
+        await administradorSchema.findByIdAndUpdate(administrador, {
             $push: { vehiculos: nuevoVehiculo._id }
         });
 
@@ -82,7 +83,7 @@ router.put("/vehiculos/:id", (req, res) => {
 });
 
 //eliminar vehiculo por id:
-router.delete("/vehiculo/:id", async (req, res) => {
+router.delete("/vehiculos/:id", async (req, res) => {
     try {
         const vehiculo = await vehiculoSchema.findByIdAndDelete(req.params.id);
 
@@ -92,7 +93,9 @@ router.delete("/vehiculo/:id", async (req, res) => {
             });
         }
 
-        res.json(vehiculo);
+        res.json(
+            vehiculo,
+        );
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

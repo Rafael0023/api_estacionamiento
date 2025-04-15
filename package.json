@@ -20,5 +20,13 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rafael0023/api_estacionamiento.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Rafael0023/api_estacionamiento/issues"
+  },
+  "homepage": "https://github.com/Rafael0023/api_estacionamiento#readme"
 }
